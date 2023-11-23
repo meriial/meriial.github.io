@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:itunesu="http://www.itunesu.com/feed" version="2.0">
+    <channel>
+        <link>https://prod.d16unt0x9ns2qc.amplifyapp.com</link>
+        <language>en-us</language>
+        <copyright>&#xA9;2020</copyright>
+        <webMaster>cameron@twosmiles.com Cameron</webMaster>
+        <managingEditor>cameron@twosmiles.com Cameron</managingEditor>
+        <image>
+            <url>https://prod.d16unt0x9ns2qc.amplifyapp.com/images/rundle-small.jpg</url>
+            <title>Two Smiles Christmas</title>
+            <link>https://prod.d16unt0x9ns2qc.amplifyapp.com</link>
+        </image>
+        <itunes:owner>
+            <itunes:name>Cameron Falkenhagen</itunes:name>
+            <itunes:email>cameron@twosmiles.ca</itunes:email>
+        </itunes:owner>
+        <itunes:category text="Music">
+        </itunes:category>
+        <itunes:keywords>music, meditation, christmas</itunes:keywords>
+        <itunes:explicit>no</itunes:explicit>
+        <itunes:image href="https://prod.d16unt0x9ns2qc.amplifyapp.com/images/rundle-small.jpg"/>
+        <atom:link href="https://prod.d16unt0x9ns2qc.amplifyapp.com/feed-xmas.xml" rel="self" type="application/rss+xml"/>
+        <pubDate>Mon, 20 Jul 2020 09:00:00 GMT</pubDate>
+        <title>Christmas Music and Meditation</title>
+        <itunes:author>Cameron Falkenhagen</itunes:author>
+        <description>Christmas Music and Meditation</description>
+        <itunes:summary>Christmas Music and Meditation</itunes:summary>
+        <itunes:subtitle>Christmas Music and Meditation</itunes:subtitle>
+        <lastBuildDate>Sat, 12 Dec 2020 09:00:00 GMT</lastBuildDate>
+
+        <!--REPEAT THIS BLOCK FOR EACH EPISODE-->
+        <item>
+            <title>Deck The Halls</title>
+            <description>Deck The Halls</description>
+            <itunes:summary>Deck The Halls</itunes:summary>
+            <itunes:subtitle>Deck The Halls</itunes:subtitle>
+            <itunesu:category itunesu:code="112"/>
+            <enclosure url="https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/xmas-01-DeckTheHalls.mp3" type="audio/mpeg" length="1"/>
+            <guid>https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/xmas-01-DeckTheHalls.mp3</guid>
+            <itunes:duration>0:03:52</itunes:duration>
+            <pubDate>Sun, 06 Dec 2020 09:02:00 GMT</pubDate>
+        </item>
+        <item>
+            <title>Go Tell It On The Mountain</title>
+            <description>Go Tell It On The Mountain</description>
+            <itunes:summary>Go Tell It On The Mountain</itunes:summary>
+            <itunes:subtitle>Go Tell It On The Mountain</itunes:subtitle>
+            <itunesu:category itunesu:code="112"/>
+            <enclosure url="https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/xmas-02-GoTellItOnTheMountain.mp3" type="audio/mpeg" length="1"/>
+            <guid>https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/xmas-02-GoTellItOnTheMountain.mp3</guid>
+            <itunes:duration>0:03:52</itunes:duration>
+            <pubDate>Sun, 12 Dec 2020 09:03:00 GMT</pubDate>
+        </item>
+        <item>
+            <title>Jingle Bells</title>
+            <description>Jingle Bells</description>
+            <itunes:summary>Jingle Bells</itunes:summary>
+            <itunes:subtitle>Jingle Bells</itunes:subtitle>
+            <itunesu:category itunesu:code="112"/>
+            <enclosure url="https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/xmas-03-JingleBells.mp3" type="audio/mpeg" length="1"/>
+            <guid>https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/xmas-03-JingleBells.mp3</guid>
+            <itunes:duration>0:03:52</itunes:duration>
+            <pubDate>Sun, 12 Dec 2020 09:04:00 GMT</pubDate>
+        </item>
+        <item>
+            <title>O Come All Ye Faithful</title>
+            <description>O Come All Ye Faithful</description>
+            <itunes:summary>O Come All Ye Faithful</itunes:summary>
+            <itunes:subtitle>O Come All Ye Faithful</itunes:subtitle>
+            <itunesu:category itunesu:code="112"/>
+            <enclosure url="https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/xmas-04-OComeAllYeFaithful.mp3" type="audio/mpeg" length="1"/>
+            <guid>https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/xmas-04-OComeAllYeFaithful.mp3</guid>
+            <itunes:duration>0:03:52</itunes:duration>
+            <pubDate>Sun, 12 Dec 2020 09:05:00 GMT</pubDate>
+        </item>
+        <item>
+            <title>O Come Emmanuel</title>
+            <description>O Come Emmanuel</description>
+            <itunes:summary>O Come Emmanuel</itunes:summary>
+            <itunes:subtitle>O Come Emmanuel</itunes:subtitle>
+            <itunesu:category itunesu:code="112"/>
+            <enclosure url="https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/xmas-05-OComeEmmanuel.mp3" type="audio/mpeg" length="1"/>
+            <guid>https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/xmas-05-OComeEmmanuel.mp3</guid>
+            <itunes:duration>0:03:52</itunes:duration>
+            <pubDate>Sun, 12 Dec 2020 09:06:00 GMT</pubDate>
+        </item>
+        <item>
+            <title>O Holy Night</title>
+            <description>O Holy Night</description>
+            <itunes:summary>O Holy Night</itunes:summary>
+            <itunes:subtitle>O Holy Night</itunes:subtitle>
+            <itunesu:category itunesu:code="112"/>
+            <enclosure url="https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/xmas-06-OHolyNight.mp3" type="audio/mpeg" length="1"/>
+            <guid>https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/xmas-06-OHolyNight.mp3</guid>
+            <itunes:duration>0:03:52</itunes:duration>
+            <pubDate>Sun, 12 Dec 2020 09:08:00 GMT</pubDate>
+        </item>
+        <item>
+            <title>We Wish You A Merry Christmas</title>
+            <description>We Wish You A Merry Christmas</description>
+            <itunes:summary>We Wish You A Merry Christmas</itunes:summary>
+            <itunes:subtitle>We Wish You A Merry Christmas</itunes:subtitle>
+            <itunesu:category itunesu:code="112"/>
+            <enclosure url="https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/xmas-07-WeWishYouAMerryChristmas.mp3" type="audio/mpeg" length="1"/>
+            <guid>https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/xmas-07-WeWishYouAMerryChristmas.mp3</guid>
+            <itunes:duration>0:03:52</itunes:duration>
+            <pubDate>Sun, 12 Dec 2020 09:09:00 GMT</pubDate>
+        </item>
+        <item>
+            <title>Silent Night</title>
+            <description>Silent Night</description>
+            <itunes:summary>Silent Night</itunes:summary>
+            <itunes:subtitle>Silent Night</itunes:subtitle>
+            <itunesu:category itunesu:code="112"/>
+            <enclosure url="https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/xmas-08-SilentNight.mp3" type="audio/mpeg" length="1"/>
+            <guid>https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/xmas-08-SilentNight.mp3</guid>
+            <itunes:duration>0:03:52</itunes:duration>
+            <pubDate>Mon, 21 Dec 2020 09:09:00 GMT</pubDate>
+        </item>
+        <item>
+            <title>Rudolf</title>
+            <description>Rudolf</description>
+            <itunes:summary>Rudolf</itunes:summary>
+            <itunes:subtitle>Rudolf</itunes:subtitle>
+            <itunesu:category itunesu:code="112"/>
+            <enclosure url="https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/xmas-09-Rudolf.mp3" type="audio/mpeg" length="1"/>
+            <guid>https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/xmas-09-Rudolf.mp3</guid>
+            <itunes:duration>0:03:52</itunes:duration>
+            <pubDate>Fri, 25 Dec 2020 09:09:00 GMT</pubDate>
+        </item>
+        <item>
+            <title>Joy To The World</title>
+            <description>Joy To The World</description>
+            <itunes:summary>Joy To The World</itunes:summary>
+            <itunes:subtitle>Joy To The World</itunes:subtitle>
+            <itunesu:category itunesu:code="112"/>
+            <enclosure url="https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/xmas-10-JoyToTheWorld.mp3" type="audio/mpeg" length="1"/>
+            <guid>https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/xmas-10-JoyToTheWorld.mp3</guid>
+            <itunes:duration>0:03:52</itunes:duration>
+            <pubDate>Fri, 25 Dec 2020 09:09:00 GMT</pubDate>
+        </item>
+        <item>
+            <title>Little Drummer</title>
+            <description>Little Drummer</description>
+            <itunes:summary>Little Drummer</itunes:summary>
+            <itunes:subtitle>Little Drummer</itunes:subtitle>
+            <itunesu:category itunesu:code="112"/>
+            <enclosure url="https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/xmas-11-LittleDrummerBoy.mp3" type="audio/mpeg" length="1"/>
+            <guid>https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/xmas-11-LittleDrummerBoy.mp3</guid>
+            <itunes:duration>0:03:52</itunes:duration>
+            <pubDate>Tue, 29 Dec 2020 09:09:00 GMT</pubDate>
+        </item>
+        <item>
+            <title>The First Noel</title>
+            <description>The First Noel</description>
+            <itunes:summary>The First Noel</itunes:summary>
+            <itunes:subtitle>The First Noel</itunes:subtitle>
+            <itunesu:category itunesu:code="112"/>
+            <enclosure url="https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/xmas-12-TheFirstNoel.mp3" type="audio/mpeg" length="1"/>
+            <guid>https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/xmas-12-TheFirstNoel.mp3</guid>
+            <itunes:duration>0:03:52</itunes:duration>
+            <pubDate>Tue, 29 Dec 2020 09:10:00 GMT</pubDate>
+        </item>
+        <!--END REPEAT-->
+    </channel>
+</rss>
