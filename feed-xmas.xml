@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:itunesu="http://www.itunesu.com/feed" version="2.0">
     <channel>
-        <link>https://prod.d16unt0x9ns2qc.amplifyapp.com</link>
+        <link>http://twosmiles.ca</link>
         <language>en-us</language>
         <copyright>&#xA9;2020</copyright>
         <webMaster>cameron@twosmiles.com Cameron</webMaster>
         <managingEditor>cameron@twosmiles.com Cameron</managingEditor>
         <image>
-            <url>https://prod.d16unt0x9ns2qc.amplifyapp.com/images/rundle-small.jpg</url>
+            <url>http://twosmiles.ca/images/rundle-small.jpg</url>
             <title>Two Smiles Christmas</title>
-            <link>https://prod.d16unt0x9ns2qc.amplifyapp.com</link>
+            <link>http://twosmiles.ca</link>
         </image>
         <itunes:owner>
             <itunes:name>Cameron Falkenhagen</itunes:name>
@@ -19,8 +19,8 @@
         </itunes:category>
         <itunes:keywords>music, meditation, christmas</itunes:keywords>
         <itunes:explicit>no</itunes:explicit>
-        <itunes:image href="https://prod.d16unt0x9ns2qc.amplifyapp.com/images/rundle-small.jpg"/>
-        <atom:link href="https://prod.d16unt0x9ns2qc.amplifyapp.com/feed-xmas.xml" rel="self" type="application/rss+xml"/>
+        <itunes:image href="http://twosmiles.ca/images/rundle-small.jpg"/>
+        <atom:link href="http://twosmiles.ca/feed-xmas.xml" rel="self" type="application/rss+xml"/>
         <pubDate>Mon, 20 Jul 2020 09:00:00 GMT</pubDate>
         <title>Christmas Music and Meditation</title>
         <itunes:author>Cameron Falkenhagen</itunes:author>
