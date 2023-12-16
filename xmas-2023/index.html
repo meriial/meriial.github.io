@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Xmas 2023 Playlist</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lobster&family=Open+Sans:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined"
+    />
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+  </head>
+  <body>
+    <div id="container">
+      <h1>Dear Friends 2023</h1>
+      <ul id="playlist"></ul>
+      <audio id="player" controls></audio>
+    </div>
+    <script>
+      const songs = [
+        {
+          title: "Insanity",
+          url: "https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/xmas2023/xmas2023-01.mp3",
+        },
+        {
+          title: "Helping",
+          url: "https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/xmas2023/xmas2023-02.mp3",
+        },
+        {
+          title: "Elle",
+          url: "https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/xmas2023/xmas2023-03.mp3",
+        },
+        {
+          title: "Clouds on a Sunny Day",
+          url: "https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/xmas2023/xmas2023-04.mp3",
+        },
+        {
+          title: "Collective System",
+          url: "https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/xmas2023/xmas2023-05.mp3",
+        },
+        {
+          title: "Puzzled",
+          url: "https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/xmas2023/xmas2023-06.mp3",
+        },
+        {
+          title: "Elementary",
+          url: "https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/xmas2023/xmas2023-07.mp3",
+        },
+      ];
+      let currentSong = 0;
+      const player = document.getElementById("player");
+      player.src = songs[currentSong].url;
+      player.addEventListener("ended", function () {
+        currentSong++;
+        if (currentSong === songs.length) {
+          currentSong = 0;
+        }
+        player.src = songs[currentSong].url;
+        player.play();
+        updatePlaylist();
+      });
+      player.play();
+      updatePlaylist();
+
+      function updatePlaylist() {
+        const playlist = document.getElementById("playlist");
+        playlist.innerHTML = "";
+        for (let i = 0; i < songs.length; i++) {
+          const li = document.createElement("li");
+          li.textContent = songs[i].title;
+          if (i === currentSong) {
+            li.className = "playing material-symbols-outlined";
+          }
+          li.addEventListener("click", function () {
+            currentSong = i;
+            player.src = songs[currentSong].url;
+            player.play();
+            updatePlaylist();
+          });
+          playlist.appendChild(li);
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,74 @@
+body {
+    background-color: rgb(85, 3, 3);
+    color: rgb(255, 255, 255);
+  }
+  
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: "Open Sans", sans-serif;
+  }
+  
+  h1 {
+    font-family: "Lobster", sans-serif;
+    font-size: 6em;
+    margin-bottom: 20px;
+  }
+  
+  #container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  ul#playlist {
+    list-style-type: none;
+    padding: 0;
+    width: 100%; /* Adjust this to change the width of the playlist */
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+  }
+  
+  a {
+    color: rgb(255, 255, 255);
+    text-decoration: none;
+  }
+  
+  ul {
+    list-style-type: none;
+  }
+  
+  li {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    margin-bottom: 5px;
+    cursor: pointer;
+  }
+  
+  li:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+  }
+  
+  ul#playlist li.playing {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+  
+  ul#playlist li.playing::after {
+    font-family: "Material Icons Outlined";
+    content: "play_circle";
+    color: white;
+    padding-left: 10px;
+    position: relative;
+    top: 3px;
+  }
+  
+  audio#player {
+    margin-top: 40px;
+    opacity: 0.8;
+  }
+  
