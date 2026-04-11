@@ -1,0 +1,251 @@
+:root {
+  --bg: #f4f7f6;
+  --surface: #ffffff;
+  --text: #1a2624;
+  --muted: #5c6f6b;
+  --accent: #2a7d6e;
+  --accent-soft: rgba(42, 125, 110, 0.12);
+  --border: #dce6e3;
+  --shadow: 0 1px 2px rgba(26, 38, 36, 0.06),
+    0 8px 24px rgba(26, 38, 36, 0.06);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  min-height: 100vh;
+  overflow-x: clip;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--bg);
+  background-image: radial-gradient(
+    ellipse 120% 80% at 50% -20%,
+    rgba(42, 125, 110, 0.08),
+    transparent 55%
+  );
+}
+
+.wrap {
+  max-width: 34rem;
+  margin: 0 auto;
+  padding: max(2rem, env(safe-area-inset-top, 0px) + 0.5rem)
+    max(1.25rem, env(safe-area-inset-right, 0px) + 0.25rem)
+    max(2.5rem, env(safe-area-inset-bottom, 0px) + 1rem)
+    max(1.25rem, env(safe-area-inset-left, 0px) + 0.25rem);
+}
+
+header {
+  margin-bottom: 2rem;
+}
+
+.eyebrow {
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 0.5rem;
+  font-weight: 600;
+}
+
+h1 {
+  font-family: "Source Serif 4", Georgia, "Times New Roman", serif;
+  font-weight: 600;
+  font-size: clamp(1.75rem, 4vw, 2.125rem);
+  line-height: 1.2;
+  margin: 0 0 0.5rem;
+  letter-spacing: -0.02em;
+}
+
+.lede {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  max-width: 36em;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 1.25rem 1.25rem 1.5rem;
+}
+
+.cover-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 0 0 1.1rem;
+}
+
+.cover-art {
+  width: min(100%, 220px);
+  height: auto;
+  aspect-ratio: 1;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 8px rgba(26, 38, 36, 0.08);
+  object-fit: cover;
+}
+
+.player-block {
+  margin-bottom: 1.25rem;
+}
+
+.player-block label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+
+audio {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-height: 44px;
+  height: 2.75rem;
+  border-radius: 8px;
+}
+
+audio::-webkit-media-controls-panel {
+  background: var(--surface);
+}
+
+.playlist-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 0.5rem;
+}
+
+ul.playlist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+ul.playlist li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 48px;
+  padding: 0.65rem 0.75rem;
+  margin: 0 -0.25rem;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background 0.15s ease, border-color 0.15s ease;
+  -webkit-tap-highlight-color: rgba(42, 125, 110, 0.15);
+  touch-action: manipulation;
+}
+
+@media (hover: hover) {
+  ul.playlist li:hover {
+    background: var(--accent-soft);
+  }
+}
+
+@media (hover: none) {
+  ul.playlist li:active {
+    background: var(--accent-soft);
+  }
+}
+
+ul.playlist li[aria-current="true"] {
+  background: var(--accent-soft);
+  border-color: rgba(42, 125, 110, 0.25);
+}
+
+.ep-num {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.8rem;
+  color: var(--muted);
+  min-width: 1.5rem;
+}
+
+.ep-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.ep-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.ep-sub {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 0.1rem;
+}
+
+.now {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+  white-space: nowrap;
+  align-self: center;
+}
+
+ul.playlist li:not([aria-current="true"]) .now {
+  display: none;
+}
+
+footer {
+  margin-top: 2rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+footer a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 380px) {
+  .wrap {
+    padding-left: max(1rem, env(safe-area-inset-left, 0px) + 0.25rem);
+    padding-right: max(1rem, env(safe-area-inset-right, 0px) + 0.25rem);
+  }
+
+  .cover-art {
+    width: min(100%, 180px);
+  }
+
+  .card {
+    padding: 1rem 1rem 1.25rem;
+    border-radius: 10px;
+  }
+
+  .lede {
+    font-size: 0.9rem;
+  }
+
+  .ep-title {
+    font-size: 0.9rem;
+  }
+}

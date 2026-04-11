@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#e8f0ed" />
+    <title>Oral Hygiene — a small show for RDH geeks</title>
+    <meta
+      name="description"
+      content="A minimal playlist for dental hygienists who care about evidence, technique, and the weirdly satisfying details."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,600;1,8..60,600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <p class="eyebrow">Podcast · playlist</p>
+        <h1>Oral Hygiene</h1>
+        <p class="lede">
+          Short listens for people who read IFUs for fun, debate bristle
+          geometry, and still get excited about a clean probe pass.
+        </p>
+      </header>
+
+      <div class="card">
+        <div class="cover-wrap">
+          <img
+            class="cover-art"
+            src="../../assets/oral-hygiene-cover.png"
+            width="512"
+            height="512"
+            alt="Oral Hygiene show artwork"
+            decoding="async"
+            fetchpriority="high"
+          />
+        </div>
+        <div class="player-block">
+          <label for="player">Now playing</label>
+          <audio id="player" controls preload="metadata"></audio>
+        </div>
+
+        <p class="playlist-title">Episodes</p>
+        <ul class="playlist" id="playlist" role="list"></ul>
+      </div>
+
+      <footer>
+        <a href="../../index.html">Two Smiles Media</a>
+        · hosted on GitHub Pages
+      </footer>
+    </div>
+
+    <script>
+      const SHOW_ARTIST = "Oral Hygiene";
+      const SHOW_ALBUM = "Two Smiles Media";
+
+      const episodes = [
+        {
+          title: "Menopause & the mouth",
+          note: "Hormones, saliva, and the visit nobody rehearses",
+          src: "../../assets/menopause-mouth.mp3",
+        },
+      ];
+
+      const player = document.getElementById("player");
+      const playlistEl = document.getElementById("playlist");
+      let current = 0;
+      let positionSyncScheduled = false;
+
+      function supportsMediaSession() {
+        return "mediaSession" in navigator;
+      }
+
+      function coverArtSources() {
+        const href = new URL(
+          "../../assets/oral-hygiene-cover.png",
+          document.baseURI
+        ).href;
+        return [
+          { src: href, sizes: "512x512", type: "image/png" },
+          { src: href, sizes: "256x256", type: "image/png" },
+        ];
+      }
+
+      function updateMediaMetadata() {
+        if (!supportsMediaSession()) return;
+        const ep = episodes[current];
+        try {
+          navigator.mediaSession.metadata = new MediaMetadata({
+            title: ep.title,
+            artist: SHOW_ARTIST,
+            album: SHOW_ALBUM,
+            artwork: coverArtSources(),
+          });
+        } catch (_) {
+          navigator.mediaSession.metadata = new MediaMetadata({
+            title: ep.title,
+            artist: SHOW_ARTIST,
+            album: SHOW_ALBUM,
+          });
+        }
+      }
+
+      function updatePositionState() {
+        if (
+          !supportsMediaSession() ||
+          typeof navigator.mediaSession.setPositionState !== "function"
+        ) {
+          return;
+        }
+        if (!Number.isFinite(player.duration) || player.duration <= 0) {
+          try {
+            navigator.mediaSession.setPositionState(null);
+          } catch (_) {}
+          return;
+        }
+        const position = Math.min(
+          Math.max(player.currentTime, 0),
+          player.duration
+        );
+        try {
+          navigator.mediaSession.setPositionState({
+            duration: player.duration,
+            playbackRate: player.playbackRate,
+            position,
+          });
+        } catch (_) {}
+      }
+
+      function schedulePositionSync() {
+        if (positionSyncScheduled) return;
+        positionSyncScheduled = true;
+        requestAnimationFrame(() => {
+          positionSyncScheduled = false;
+          updatePositionState();
+        });
+      }
+
+      function registerMediaSessionHandlers() {
+        if (!supportsMediaSession()) return;
+        try {
+          navigator.mediaSession.setActionHandler("play", () => {
+            player.play();
+          });
+          navigator.mediaSession.setActionHandler("pause", () => {
+            player.pause();
+          });
+          navigator.mediaSession.setActionHandler("seekbackward", (d) => {
+            const skip = d.seekOffset ?? 10;
+            player.currentTime = Math.max(0, player.currentTime - skip);
+            schedulePositionSync();
+          });
+          navigator.mediaSession.setActionHandler("seekforward", (d) => {
+            const skip = d.seekOffset ?? 10;
+            const end = Number.isFinite(player.duration)
+              ? player.duration
+              : player.currentTime + skip;
+            player.currentTime = Math.min(end, player.currentTime + skip);
+            schedulePositionSync();
+          });
+        } catch (_) {}
+
+        if (episodes.length > 1) {
+          try {
+            navigator.mediaSession.setActionHandler("previoustrack", () => {
+              current = (current - 1 + episodes.length) % episodes.length;
+              player.src = episodes[current].src;
+              player.play().catch(() => {});
+              renderPlaylist();
+              updateMediaMetadata();
+            });
+            navigator.mediaSession.setActionHandler("nexttrack", () => {
+              current = (current + 1) % episodes.length;
+              player.src = episodes[current].src;
+              player.play().catch(() => {});
+              renderPlaylist();
+              updateMediaMetadata();
+            });
+          } catch (_) {}
+        }
+      }
+
+      function syncPlaybackState() {
+        if (!supportsMediaSession()) return;
+        navigator.mediaSession.playbackState = player.paused
+          ? "paused"
+          : "playing";
+      }
+
+      player.addEventListener("play", () => {
+        syncPlaybackState();
+        updateMediaMetadata();
+      });
+      player.addEventListener("pause", () => {
+        syncPlaybackState();
+      });
+      player.addEventListener("loadedmetadata", () => {
+        updateMediaMetadata();
+        updatePositionState();
+      });
+      player.addEventListener("durationchange", updatePositionState);
+      player.addEventListener("ratechange", updatePositionState);
+      player.addEventListener("seeked", updatePositionState);
+      player.addEventListener("timeupdate", schedulePositionSync);
+
+      registerMediaSessionHandlers();
+
+      function renderPlaylist() {
+        playlistEl.innerHTML = "";
+        episodes.forEach((ep, i) => {
+          const li = document.createElement("li");
+          li.setAttribute("role", "listitem");
+          li.tabIndex = 0;
+          if (i === current) li.setAttribute("aria-current", "true");
+
+          const num = document.createElement("span");
+          num.className = "ep-num";
+          num.textContent = String(i + 1).padStart(2, "0");
+
+          const meta = document.createElement("div");
+          meta.className = "ep-meta";
+          const t = document.createElement("div");
+          t.className = "ep-title";
+          t.textContent = ep.title;
+          const s = document.createElement("div");
+          s.className = "ep-sub";
+          s.textContent = ep.note;
+          meta.append(t, s);
+
+          const badge = document.createElement("span");
+          badge.className = "now";
+          badge.textContent = "Playing";
+
+          li.append(num, meta, badge);
+
+          const play = () => {
+            current = i;
+            player.src = ep.src;
+            player.play().catch(() => {});
+            updateMediaMetadata();
+            renderPlaylist();
+          };
+
+          li.addEventListener("click", play);
+          li.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              play();
+            }
+          });
+
+          playlistEl.appendChild(li);
+        });
+      }
+
+      player.addEventListener("ended", () => {
+        if (episodes.length > 1) {
+          current = (current + 1) % episodes.length;
+          player.src = episodes[current].src;
+          updateMediaMetadata();
+          renderPlaylist();
+          player.play().catch(() => {});
+          return;
+        }
+        if (supportsMediaSession()) {
+          navigator.mediaSession.playbackState = "paused";
+        }
+      });
+
+      renderPlaylist();
+      player.src = episodes[0].src;
+      updateMediaMetadata();
+    </script>
+  </body>
+</html>
