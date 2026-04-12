@@ -352,6 +352,13 @@ ul.playlist li[aria-current="true"] {
   margin-top: 0.1rem;
 }
 
+.ep-date {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 0.25rem;
+  font-variant-numeric: tabular-nums;
+}
+
 .now {
   font-size: 0.7rem;
   font-weight: 600;

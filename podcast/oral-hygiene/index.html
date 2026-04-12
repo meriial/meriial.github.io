@@ -79,6 +79,17 @@
         return "mediaSession" in navigator;
       }
 
+      /** `published` is ISO date-only, e.g. "2026-04-12". */
+      function fmtPublished(iso) {
+        const d = new Date(`${iso}T12:00:00`);
+        if (Number.isNaN(d.getTime())) return iso;
+        return d.toLocaleDateString(undefined, {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        });
+      }
+
       function coverArtSources() {
         const href = new URL(
           "../../assets/oral-hygiene-cover.png",
@@ -234,6 +245,16 @@
           s.className = "ep-sub";
           s.textContent = ep.note;
           meta.append(t, s);
+          if (ep.published) {
+            const dEl = document.createElement("div");
+            dEl.className = "ep-date";
+            dEl.setAttribute(
+              "aria-label",
+              `Published ${fmtPublished(ep.published)}`,
+            );
+            dEl.textContent = fmtPublished(ep.published);
+            meta.appendChild(dEl);
+          }
 
           const badge = document.createElement("span");
           badge.className = "now";
