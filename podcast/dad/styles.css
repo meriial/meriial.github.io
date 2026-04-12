@@ -341,9 +341,34 @@ ul.playlist li[aria-current="true"] {
   min-width: 0;
 }
 
+.ep-title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.ep-title-row .ep-title {
+  min-width: 0;
+  flex: 1;
+}
+
 .ep-title {
   font-weight: 600;
   font-size: 0.95rem;
+}
+
+.ep-dur {
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+
+.ep-dur--pending {
+  opacity: 0.55;
 }
 
 .ep-sub {
@@ -409,6 +434,10 @@ footer a:hover {
 
   .ep-title {
     font-size: 0.9rem;
+  }
+
+  .ep-dur {
+    font-size: 0.75rem;
   }
 
   .cp-btn:not(.cp-btn--play) {

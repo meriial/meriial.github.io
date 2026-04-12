@@ -112,6 +112,16 @@
       let current = 0;
       let positionSyncScheduled = false;
       let isSeeking = false;
+      let autoAdvanceTimeoutId = null;
+
+      const AUTO_ADVANCE_GAP_MS = 2000;
+
+      function clearPendingAutoAdvance() {
+        if (autoAdvanceTimeoutId !== null) {
+          clearTimeout(autoAdvanceTimeoutId);
+          autoAdvanceTimeoutId = null;
+        }
+      }
 
       const PLAY_SVG = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>`;
       const PAUSE_SVG = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1.5"/><rect x="14" y="4" width="4" height="16" rx="1.5"/></svg>`;
@@ -138,6 +148,47 @@
           month: "short",
           day: "numeric",
         });
+      }
+
+      /** Load duration for playlist row (separate from main player). */
+      function primeEpisodeDuration(src, durEl) {
+        durEl.classList.add("ep-dur--pending");
+        durEl.textContent = "—";
+        const a = new Audio();
+        a.preload = "metadata";
+        const cleanup = () => {
+          a.removeEventListener("loadedmetadata", onMeta);
+          a.removeEventListener("error", onErr);
+          a.removeAttribute("src");
+          try {
+            a.load();
+          } catch (_) {}
+        };
+        const onMeta = () => {
+          if (!durEl.isConnected) {
+            cleanup();
+            return;
+          }
+          durEl.classList.remove("ep-dur--pending");
+          if (Number.isFinite(a.duration) && a.duration > 0) {
+            const formatted = fmtTime(a.duration);
+            durEl.textContent = formatted;
+            durEl.setAttribute("aria-label", `Duration ${formatted}`);
+          } else {
+            durEl.textContent = "—";
+          }
+          cleanup();
+        };
+        const onErr = () => {
+          if (durEl.isConnected) {
+            durEl.classList.remove("ep-dur--pending");
+            durEl.textContent = "—";
+          }
+          cleanup();
+        };
+        a.addEventListener("loadedmetadata", onMeta);
+        a.addEventListener("error", onErr);
+        a.src = src;
       }
 
       // ── Custom-player UI updates ──────────────────────────────────────────
@@ -271,6 +322,7 @@
       // ── Episode loading ───────────────────────────────────────────────────
 
       function loadEpisode(index, autoplay) {
+        clearPendingAutoAdvance();
         current = index;
         player.src = episodes[current].src;
         updateCpTitle();
@@ -283,6 +335,7 @@
       // ── Player events ─────────────────────────────────────────────────────
 
       player.addEventListener("play", () => {
+        clearPendingAutoAdvance();
         updatePlayBtn();
         syncPlaybackState();
         updateMediaMetadata();
@@ -311,7 +364,11 @@
       });
       player.addEventListener("ended", () => {
         if (episodes.length > 1) {
-          loadEpisode((current + 1) % episodes.length, true);
+          clearPendingAutoAdvance();
+          autoAdvanceTimeoutId = setTimeout(() => {
+            autoAdvanceTimeoutId = null;
+            loadEpisode((current + 1) % episodes.length, true);
+          }, AUTO_ADVANCE_GAP_MS);
           return;
         }
         if (supportsMediaSession())
@@ -369,13 +426,20 @@
 
           const meta = document.createElement("div");
           meta.className = "ep-meta";
+          const titleRow = document.createElement("div");
+          titleRow.className = "ep-title-row";
           const t = document.createElement("div");
           t.className = "ep-title";
           t.textContent = ep.title;
+          const durEl = document.createElement("span");
+          durEl.className = "ep-dur";
+          durEl.setAttribute("aria-label", "Duration loading");
+          titleRow.append(t, durEl);
+          primeEpisodeDuration(ep.src, durEl);
           const s = document.createElement("div");
           s.className = "ep-sub";
           s.textContent = ep.note;
-          meta.append(t, s);
+          meta.append(titleRow, s);
           if (ep.published) {
             const dEl = document.createElement("div");
             dEl.className = "ep-date";

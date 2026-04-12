@@ -74,6 +74,25 @@
       const playlistEl = document.getElementById("playlist");
       let current = 0;
       let positionSyncScheduled = false;
+      let autoAdvanceTimeoutId = null;
+
+      const AUTO_ADVANCE_GAP_MS = 2000;
+
+      function clearPendingAutoAdvance() {
+        if (autoAdvanceTimeoutId !== null) {
+          clearTimeout(autoAdvanceTimeoutId);
+          autoAdvanceTimeoutId = null;
+        }
+      }
+
+      function goToEpisode(index, autoplay) {
+        clearPendingAutoAdvance();
+        current = index;
+        player.src = episodes[current].src;
+        updateMediaMetadata();
+        renderPlaylist();
+        if (autoplay) player.play().catch(() => {});
+      }
 
       function supportsMediaSession() {
         return "mediaSession" in navigator;
@@ -88,6 +107,54 @@
           month: "short",
           day: "numeric",
         });
+      }
+
+      function fmtTime(s) {
+        if (!Number.isFinite(s) || s < 0) return "0:00";
+        const m = Math.floor(s / 60);
+        const sec = String(Math.floor(s % 60)).padStart(2, "0");
+        return `${m}:${sec}`;
+      }
+
+      /** Load duration for playlist row (separate from main player). */
+      function primeEpisodeDuration(src, durEl) {
+        durEl.classList.add("ep-dur--pending");
+        durEl.textContent = "—";
+        const a = new Audio();
+        a.preload = "metadata";
+        const cleanup = () => {
+          a.removeEventListener("loadedmetadata", onMeta);
+          a.removeEventListener("error", onErr);
+          a.removeAttribute("src");
+          try {
+            a.load();
+          } catch (_) {}
+        };
+        const onMeta = () => {
+          if (!durEl.isConnected) {
+            cleanup();
+            return;
+          }
+          durEl.classList.remove("ep-dur--pending");
+          if (Number.isFinite(a.duration) && a.duration > 0) {
+            const formatted = fmtTime(a.duration);
+            durEl.textContent = formatted;
+            durEl.setAttribute("aria-label", `Duration ${formatted}`);
+          } else {
+            durEl.textContent = "—";
+          }
+          cleanup();
+        };
+        const onErr = () => {
+          if (durEl.isConnected) {
+            durEl.classList.remove("ep-dur--pending");
+            durEl.textContent = "—";
+          }
+          cleanup();
+        };
+        a.addEventListener("loadedmetadata", onMeta);
+        a.addEventListener("error", onErr);
+        a.src = src;
       }
 
       function coverArtSources() {
@@ -182,18 +249,10 @@
         if (episodes.length > 1) {
           try {
             navigator.mediaSession.setActionHandler("previoustrack", () => {
-              current = (current - 1 + episodes.length) % episodes.length;
-              player.src = episodes[current].src;
-              player.play().catch(() => {});
-              renderPlaylist();
-              updateMediaMetadata();
+              goToEpisode((current - 1 + episodes.length) % episodes.length, true);
             });
             navigator.mediaSession.setActionHandler("nexttrack", () => {
-              current = (current + 1) % episodes.length;
-              player.src = episodes[current].src;
-              player.play().catch(() => {});
-              renderPlaylist();
-              updateMediaMetadata();
+              goToEpisode((current + 1) % episodes.length, true);
             });
           } catch (_) {}
         }
@@ -207,6 +266,7 @@
       }
 
       player.addEventListener("play", () => {
+        clearPendingAutoAdvance();
         syncPlaybackState();
         updateMediaMetadata();
       });
@@ -238,13 +298,20 @@
 
           const meta = document.createElement("div");
           meta.className = "ep-meta";
+          const titleRow = document.createElement("div");
+          titleRow.className = "ep-title-row";
           const t = document.createElement("div");
           t.className = "ep-title";
           t.textContent = ep.title;
+          const durEl = document.createElement("span");
+          durEl.className = "ep-dur";
+          durEl.setAttribute("aria-label", "Duration loading");
+          titleRow.append(t, durEl);
+          primeEpisodeDuration(ep.src, durEl);
           const s = document.createElement("div");
           s.className = "ep-sub";
           s.textContent = ep.note;
-          meta.append(t, s);
+          meta.append(titleRow, s);
           if (ep.published) {
             const dEl = document.createElement("div");
             dEl.className = "ep-date";
@@ -263,11 +330,7 @@
           li.append(num, meta, badge);
 
           const play = () => {
-            current = i;
-            player.src = ep.src;
-            player.play().catch(() => {});
-            updateMediaMetadata();
-            renderPlaylist();
+            goToEpisode(i, true);
           };
 
           li.addEventListener("click", play);
@@ -284,11 +347,11 @@
 
       player.addEventListener("ended", () => {
         if (episodes.length > 1) {
-          current = (current + 1) % episodes.length;
-          player.src = episodes[current].src;
-          updateMediaMetadata();
-          renderPlaylist();
-          player.play().catch(() => {});
+          clearPendingAutoAdvance();
+          autoAdvanceTimeoutId = setTimeout(() => {
+            autoAdvanceTimeoutId = null;
+            goToEpisode((current + 1) % episodes.length, true);
+          }, AUTO_ADVANCE_GAP_MS);
           return;
         }
         if (supportsMediaSession()) {
