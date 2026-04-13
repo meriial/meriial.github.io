@@ -241,6 +241,13 @@
 
       // ── Media Session ─────────────────────────────────────────────────────
 
+      function coverArtSources() {
+        return [
+          { src: "https://picsum.photos/seed/elementary/512/512", sizes: "512x512", type: "image/jpeg" },
+          { src: "https://picsum.photos/seed/elementary/256/256", sizes: "256x256", type: "image/jpeg" },
+        ];
+      }
+
       function updateMediaMetadata() {
         if (!supportsMediaSession()) return;
         const ep = episodes[current];
@@ -249,8 +256,15 @@
             title: ep.title,
             artist: SHOW_ARTIST,
             album: SHOW_ALBUM,
+            artwork: coverArtSources(),
           });
-        } catch (_) {}
+        } catch (_) {
+          navigator.mediaSession.metadata = new MediaMetadata({
+            title: ep.title,
+            artist: SHOW_ARTIST,
+            album: SHOW_ALBUM,
+          });
+        }
       }
 
       function updatePositionState() {
