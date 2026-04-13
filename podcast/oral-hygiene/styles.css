@@ -243,6 +243,49 @@ ul.playlist li:not([aria-current="true"]) .now {
   display: none;
 }
 
+/* ── Home-screen hint ────────────────────────────────────────────────────── */
+
+.home-screen-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  background: var(--accent-soft);
+  border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  color: var(--text);
+  margin-bottom: 1.25rem;
+}
+
+.home-screen-hint span {
+  flex: 1;
+  line-height: 1.4;
+}
+
+.hsb-close {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  padding: 2px;
+  margin: 0;
+  cursor: pointer;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.hsb-close:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+
 footer {
   margin-top: 2rem;
   font-size: 0.8rem;

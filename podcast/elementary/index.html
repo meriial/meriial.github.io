@@ -21,6 +21,15 @@
         <h1>Elementary</h1>
       </header>
 
+      <div class="home-screen-hint" id="home-screen-hint" hidden>
+        <span>Add this page to your home screen — it makes it possible to listen with your phone locked.</span>
+        <button class="hsb-close" aria-label="Dismiss">
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+          </svg>
+        </button>
+      </div>
+
       <div class="card">
         <div class="player-block">
           <audio id="player" preload="metadata"></audio>
@@ -480,6 +489,23 @@
       renderPlaylist();
       loadEpisode(0, false);
       updatePlayBtn();
+
+      // ── Home-screen hint ────────────────────────────────────────────────
+      (function () {
+        const isStandalone =
+          window.navigator.standalone === true ||
+          window.matchMedia("(display-mode: standalone)").matches;
+        const isMobile = window.matchMedia("(pointer: coarse)").matches;
+        const dismissed = localStorage.getItem("hsb-dismissed");
+        if (isStandalone || !isMobile || dismissed) return;
+        const hint = document.getElementById("home-screen-hint");
+        if (!hint) return;
+        hint.hidden = false;
+        hint.querySelector(".hsb-close").addEventListener("click", () => {
+          hint.hidden = true;
+          try { localStorage.setItem("hsb-dismissed", "1"); } catch (_) {}
+        });
+      })();
     </script>
   </body>
 </html>
