@@ -32,7 +32,7 @@
       </header>
 
       <div class="home-screen-hint" id="home-screen-hint" hidden>
-        <span>Add this page to your home screen — it makes it possible to listen with your phone locked.</span>
+        <span>▎ Tap the Share button ( ⬆ ) then choose "Add to Home Screen"</span>
         <button class="hsb-close" aria-label="Dismiss">
           <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
             <path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
@@ -379,14 +379,19 @@
       player.src = episodes[0].src;
       updateMediaMetadata();
 
+      // ── iOS audio session (keep playing on lock screen) ─────────────────
+      if ("audioSession" in navigator) {
+        try { navigator.audioSession.type = "playback"; } catch (_) {}
+      }
+
       // ── Home-screen hint ────────────────────────────────────────────────
       (function () {
         const isStandalone =
           window.navigator.standalone === true ||
           window.matchMedia("(display-mode: standalone)").matches;
-        const isMobile = window.matchMedia("(pointer: coarse)").matches;
+        const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
         const dismissed = localStorage.getItem("hsb-dismissed");
-        if (isStandalone || !isMobile || dismissed) return;
+        if (isStandalone || !isIOS || dismissed) return;
         const hint = document.getElementById("home-screen-hint");
         if (!hint) return;
         hint.hidden = false;

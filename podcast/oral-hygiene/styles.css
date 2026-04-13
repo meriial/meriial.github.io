@@ -245,6 +245,8 @@ ul.playlist li:not([aria-current="true"]) .now {
 
 /* ── Home-screen hint ────────────────────────────────────────────────────── */
 
+.home-screen-hint[hidden] { display: none; }
+
 .home-screen-hint {
   display: flex;
   align-items: flex-start;
