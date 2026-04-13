@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#f5f5f7" />
+    <title>Elementary</title>
+    <meta
+      name="description"
+      content="Short conversations for people who finally have the calendar to match their curiosity. A podcast from Two Smiles Media."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <p class="eyebrow">Podcast · playlist</p>
+        <h1>Elementary</h1>
+      </header>
+
+      <div class="card">
+        <div class="player-block">
+          <audio id="player" preload="metadata"></audio>
+
+          <div class="custom-player">
+            <div class="cp-track">
+              <span class="cp-now-label">Now playing</span>
+              <span id="cp-title" class="cp-title">—</span>
+            </div>
+            <div class="cp-progress-row">
+              <span id="cp-time" class="cp-time">0:00</span>
+              <input
+                id="cp-seek"
+                class="cp-seek"
+                type="range"
+                min="0"
+                max="100"
+                value="0"
+                step="0.1"
+                aria-label="Seek through episode"
+              />
+              <span id="cp-dur" class="cp-dur">0:00</span>
+            </div>
+            <div
+              class="cp-controls"
+              role="group"
+              aria-label="Playback controls"
+            >
+              <button
+                id="btn-prev"
+                class="cp-btn"
+                aria-label="Previous episode"
+              >
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <rect x="5" y="5" width="2.5" height="14" rx="1.25" />
+                  <path d="M18.5 5 9 12l9.5 7V5z" />
+                </svg>
+              </button>
+              <button
+                id="btn-play"
+                class="cp-btn cp-btn--play"
+                aria-label="Play"
+              >
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </button>
+              <button id="btn-next" class="cp-btn" aria-label="Next episode">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M5.5 5l9.5 7-9.5 7V5z" />
+                  <rect x="16.5" y="5" width="2.5" height="14" rx="1.25" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <p class="playlist-title">Episodes</p>
+        <ul class="playlist" id="playlist" role="list"></ul>
+      </div>
+    </div>
+
+    <script>
+      const SHOW_ARTIST = "Two Smiles Media";
+      const SHOW_ALBUM = "Two Smiles";
+
+      const episodes = [
+        {
+          title: "Five Ontario trailer trips off the usual list",
+          note: "Provincial-park picks for retirees who want new pins beyond Sandbanks and the Pinery",
+          src: "https://twosmiles-podcasts.s3.amazonaws.com/elementary/ontario-trailer-gems-1.mp3",
+          published: "2026-04-13",
+        },
+      ];
+
+      const player = document.getElementById("player");
+      const playlistEl = document.getElementById("playlist");
+      const cpTitle = document.getElementById("cp-title");
+      const cpTime = document.getElementById("cp-time");
+      const cpDur = document.getElementById("cp-dur");
+      const cpSeek = document.getElementById("cp-seek");
+      const btnPlay = document.getElementById("btn-play");
+      const btnPrev = document.getElementById("btn-prev");
+      const btnNext = document.getElementById("btn-next");
+
+      let current = 0;
+      let positionSyncScheduled = false;
+      let isSeeking = false;
+      let autoAdvanceTimeoutId = null;
+
+      const AUTO_ADVANCE_GAP_MS = 2000;
+
+      function clearPendingAutoAdvance() {
+        if (autoAdvanceTimeoutId !== null) {
+          clearTimeout(autoAdvanceTimeoutId);
+          autoAdvanceTimeoutId = null;
+        }
+      }
+
+      const PLAY_SVG = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>`;
+      const PAUSE_SVG = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1.5"/><rect x="14" y="4" width="4" height="16" rx="1.5"/></svg>`;
+
+      // ── Helpers ──────────────────────────────────────────────────────────
+
+      function supportsMediaSession() {
+        return "mediaSession" in navigator;
+      }
+
+      function fmtTime(s) {
+        if (!Number.isFinite(s) || s < 0) return "0:00";
+        const m = Math.floor(s / 60);
+        const sec = String(Math.floor(s % 60)).padStart(2, "0");
+        return `${m}:${sec}`;
+      }
+
+      /** `published` is ISO date-only, e.g. "2026-04-12". */
+      function fmtPublished(iso) {
+        const d = new Date(`${iso}T12:00:00`);
+        if (Number.isNaN(d.getTime())) return iso;
+        return d.toLocaleDateString(undefined, {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        });
+      }
+
+      /** Load duration for playlist row (separate from main player). */
+      function primeEpisodeDuration(src, durEl) {
+        durEl.classList.add("ep-dur--pending");
+        durEl.textContent = "—";
+        const a = new Audio();
+        a.preload = "metadata";
+        const cleanup = () => {
+          a.removeEventListener("loadedmetadata", onMeta);
+          a.removeEventListener("error", onErr);
+          a.removeAttribute("src");
+          try {
+            a.load();
+          } catch (_) {}
+        };
+        const onMeta = () => {
+          if (!durEl.isConnected) {
+            cleanup();
+            return;
+          }
+          durEl.classList.remove("ep-dur--pending");
+          if (Number.isFinite(a.duration) && a.duration > 0) {
+            const formatted = fmtTime(a.duration);
+            durEl.textContent = formatted;
+            durEl.setAttribute("aria-label", `Duration ${formatted}`);
+          } else {
+            durEl.textContent = "—";
+          }
+          cleanup();
+        };
+        const onErr = () => {
+          if (durEl.isConnected) {
+            durEl.classList.remove("ep-dur--pending");
+            durEl.textContent = "—";
+          }
+          cleanup();
+        };
+        a.addEventListener("loadedmetadata", onMeta);
+        a.addEventListener("error", onErr);
+        a.src = src;
+      }
+
+      // ── Custom-player UI updates ──────────────────────────────────────────
+
+      function updatePlayBtn() {
+        const paused = player.paused;
+        btnPlay.innerHTML = paused ? PLAY_SVG : PAUSE_SVG;
+        btnPlay.setAttribute("aria-label", paused ? "Play" : "Pause");
+      }
+
+      function updateCpTitle() {
+        cpTitle.textContent = episodes[current].title;
+      }
+
+      function updateSeekFill() {
+        const max = Number(cpSeek.max);
+        const val = Number(cpSeek.value);
+        const pct = max > 0 ? (val / max) * 100 : 0;
+        cpSeek.style.setProperty("--fill", `${pct.toFixed(2)}%`);
+      }
+
+      function updateSeek() {
+        const dur = player.duration;
+        if (Number.isFinite(dur) && dur > 0) {
+          cpSeek.max = String(dur);
+          if (!isSeeking) cpSeek.value = String(player.currentTime);
+          cpDur.textContent = fmtTime(dur);
+        }
+        cpTime.textContent = fmtTime(player.currentTime);
+        updateSeekFill();
+      }
+
+      function updateTrackButtons() {
+        const multi = episodes.length > 1;
+        btnPrev.disabled = !multi;
+        btnNext.disabled = !multi;
+      }
+
+      // ── Media Session ─────────────────────────────────────────────────────
+
+      function updateMediaMetadata() {
+        if (!supportsMediaSession()) return;
+        const ep = episodes[current];
+        try {
+          navigator.mediaSession.metadata = new MediaMetadata({
+            title: ep.title,
+            artist: SHOW_ARTIST,
+            album: SHOW_ALBUM,
+          });
+        } catch (_) {}
+      }
+
+      function updatePositionState() {
+        if (
+          !supportsMediaSession() ||
+          typeof navigator.mediaSession.setPositionState !== "function"
+        )
+          return;
+        if (!Number.isFinite(player.duration) || player.duration <= 0) {
+          try {
+            navigator.mediaSession.setPositionState(null);
+          } catch (_) {}
+          return;
+        }
+        const position = Math.min(
+          Math.max(player.currentTime, 0),
+          player.duration,
+        );
+        try {
+          navigator.mediaSession.setPositionState({
+            duration: player.duration,
+            playbackRate: player.playbackRate,
+            position,
+          });
+        } catch (_) {}
+      }
+
+      function schedulePositionSync() {
+        if (positionSyncScheduled) return;
+        positionSyncScheduled = true;
+        requestAnimationFrame(() => {
+          positionSyncScheduled = false;
+          updatePositionState();
+        });
+      }
+
+      function syncPlaybackState() {
+        if (!supportsMediaSession()) return;
+        navigator.mediaSession.playbackState = player.paused
+          ? "paused"
+          : "playing";
+      }
+
+      function registerMediaSessionHandlers() {
+        if (!supportsMediaSession()) return;
+        try {
+          navigator.mediaSession.setActionHandler("play", () => player.play());
+          navigator.mediaSession.setActionHandler("pause", () =>
+            player.pause(),
+          );
+          navigator.mediaSession.setActionHandler("seekbackward", (d) => {
+            const skip = d.seekOffset ?? 10;
+            player.currentTime = Math.max(0, player.currentTime - skip);
+            schedulePositionSync();
+          });
+          navigator.mediaSession.setActionHandler("seekforward", (d) => {
+            const skip = d.seekOffset ?? 10;
+            const end = Number.isFinite(player.duration)
+              ? player.duration
+              : player.currentTime + skip;
+            player.currentTime = Math.min(end, player.currentTime + skip);
+            schedulePositionSync();
+          });
+        } catch (_) {}
+
+        if (episodes.length > 1) {
+          try {
+            navigator.mediaSession.setActionHandler("previoustrack", () => {
+              loadEpisode(
+                (current - 1 + episodes.length) % episodes.length,
+                true,
+              );
+            });
+            navigator.mediaSession.setActionHandler("nexttrack", () => {
+              loadEpisode((current + 1) % episodes.length, true);
+            });
+          } catch (_) {}
+        }
+      }
+
+      // ── Episode loading ───────────────────────────────────────────────────
+
+      function loadEpisode(index, autoplay) {
+        clearPendingAutoAdvance();
+        current = index;
+        player.src = episodes[current].src;
+        updateCpTitle();
+        renderPlaylist();
+        updateMediaMetadata();
+        updateSeek();
+        if (autoplay) player.play().catch(() => {});
+      }
+
+      // ── Player events ─────────────────────────────────────────────────────
+
+      player.addEventListener("play", () => {
+        clearPendingAutoAdvance();
+        updatePlayBtn();
+        syncPlaybackState();
+        updateMediaMetadata();
+      });
+      player.addEventListener("pause", () => {
+        updatePlayBtn();
+        syncPlaybackState();
+      });
+      player.addEventListener("loadedmetadata", () => {
+        updateMediaMetadata();
+        updatePositionState();
+        updateSeek();
+      });
+      player.addEventListener("durationchange", () => {
+        updatePositionState();
+        updateSeek();
+      });
+      player.addEventListener("ratechange", updatePositionState);
+      player.addEventListener("seeked", () => {
+        updatePositionState();
+        updateSeek();
+      });
+      player.addEventListener("timeupdate", () => {
+        schedulePositionSync();
+        if (!isSeeking) updateSeek();
+      });
+      player.addEventListener("ended", () => {
+        if (episodes.length > 1) {
+          clearPendingAutoAdvance();
+          autoAdvanceTimeoutId = setTimeout(() => {
+            autoAdvanceTimeoutId = null;
+            loadEpisode((current + 1) % episodes.length, true);
+          }, AUTO_ADVANCE_GAP_MS);
+          return;
+        }
+        if (supportsMediaSession())
+          navigator.mediaSession.playbackState = "paused";
+        updatePlayBtn();
+      });
+
+      // ── Button interactions ───────────────────────────────────────────────
+
+      btnPlay.addEventListener("click", () => {
+        if (player.paused) player.play().catch(() => {});
+        else player.pause();
+      });
+      btnPrev.addEventListener("click", () => {
+        loadEpisode((current - 1 + episodes.length) % episodes.length, true);
+      });
+      btnNext.addEventListener("click", () => {
+        loadEpisode((current + 1) % episodes.length, true);
+      });
+
+      // ── Seek bar ──────────────────────────────────────────────────────────
+
+      cpSeek.addEventListener("mousedown", () => {
+        isSeeking = true;
+      });
+      cpSeek.addEventListener(
+        "touchstart",
+        () => {
+          isSeeking = true;
+        },
+        { passive: true },
+      );
+      cpSeek.addEventListener("input", () => {
+        cpTime.textContent = fmtTime(Number(cpSeek.value));
+        updateSeekFill();
+      });
+      cpSeek.addEventListener("change", () => {
+        player.currentTime = Number(cpSeek.value);
+        isSeeking = false;
+      });
+
+      // ── Playlist rendering ────────────────────────────────────────────────
+
+      function renderPlaylist() {
+        playlistEl.innerHTML = "";
+        episodes.forEach((ep, i) => {
+          const li = document.createElement("li");
+          li.setAttribute("role", "listitem");
+          li.tabIndex = 0;
+          if (i === current) li.setAttribute("aria-current", "true");
+
+          const num = document.createElement("span");
+          num.className = "ep-num";
+          num.textContent = String(i + 1).padStart(2, "0");
+
+          const meta = document.createElement("div");
+          meta.className = "ep-meta";
+          const titleRow = document.createElement("div");
+          titleRow.className = "ep-title-row";
+          const t = document.createElement("div");
+          t.className = "ep-title";
+          t.textContent = ep.title;
+          const durEl = document.createElement("span");
+          durEl.className = "ep-dur";
+          durEl.setAttribute("aria-label", "Duration loading");
+          titleRow.append(t, durEl);
+          primeEpisodeDuration(ep.src, durEl);
+          const s = document.createElement("div");
+          s.className = "ep-sub";
+          s.textContent = ep.note;
+          meta.append(titleRow, s);
+          if (ep.published) {
+            const dEl = document.createElement("div");
+            dEl.className = "ep-date";
+            dEl.setAttribute(
+              "aria-label",
+              `Published ${fmtPublished(ep.published)}`,
+            );
+            dEl.textContent = fmtPublished(ep.published);
+            meta.appendChild(dEl);
+          }
+
+          const badge = document.createElement("span");
+          badge.className = "now";
+          badge.textContent = "Playing";
+
+          li.append(num, meta, badge);
+
+          const play = () => loadEpisode(i, true);
+          li.addEventListener("click", play);
+          li.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              play();
+            }
+          });
+
+          playlistEl.appendChild(li);
+        });
+      }
+
+      // ── Init ──────────────────────────────────────────────────────────────
+
+      registerMediaSessionHandlers();
+      updateTrackButtons();
+      renderPlaylist();
+      loadEpisode(0, false);
+      updatePlayBtn();
+    </script>
+  </body>
+</html>
