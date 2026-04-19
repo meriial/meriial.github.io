@@ -84,6 +84,43 @@
                 </svg>
               </button>
             </div>
+            <div class="cp-rate" role="group" aria-label="Playback speed">
+              <span class="cp-rate-label">Speed</span>
+              <div class="cp-rate-btns">
+                <button
+                  type="button"
+                  class="cp-rate-btn"
+                  data-rate="1"
+                  aria-pressed="false"
+                >
+                  1×
+                </button>
+                <button
+                  type="button"
+                  class="cp-rate-btn"
+                  data-rate="1.25"
+                  aria-pressed="false"
+                >
+                  1.25×
+                </button>
+                <button
+                  type="button"
+                  class="cp-rate-btn"
+                  data-rate="1.5"
+                  aria-pressed="false"
+                >
+                  1.5×
+                </button>
+                <button
+                  type="button"
+                  class="cp-rate-btn"
+                  data-rate="2"
+                  aria-pressed="false"
+                >
+                  2×
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -138,6 +175,58 @@
       const btnPlay = document.getElementById("btn-play");
       const btnPrev = document.getElementById("btn-prev");
       const btnNext = document.getElementById("btn-next");
+
+      const RATE_OPTIONS = [1, 1.25, 1.5, 2];
+      const RATE_STORAGE_KEY = "pod-playback-rate";
+
+      function nearestRate(playbackRate) {
+        if (!Number.isFinite(playbackRate)) return 1;
+        return RATE_OPTIONS.reduce(
+          (best, x) =>
+            Math.abs(x - playbackRate) < Math.abs(best - playbackRate)
+              ? x
+              : best,
+          RATE_OPTIONS[0],
+        );
+      }
+
+      function readStoredPlaybackRate() {
+        try {
+          const raw = localStorage.getItem(RATE_STORAGE_KEY);
+          if (raw == null) return 1;
+          const v = Number(raw);
+          if (!Number.isFinite(v)) return 1;
+          return nearestRate(v);
+        } catch (_) {
+          return 1;
+        }
+      }
+
+      function syncPlaybackRateButtons() {
+        const r = nearestRate(player.playbackRate);
+        document.querySelectorAll(".cp-rate-btn").forEach((btn) => {
+          const x = Number(btn.dataset.rate);
+          const active = Math.abs(x - r) < 0.001;
+          btn.classList.toggle("cp-rate-btn--active", active);
+          btn.setAttribute("aria-pressed", active ? "true" : "false");
+        });
+      }
+
+      function setPlaybackRate(rate) {
+        const r = nearestRate(Number(rate));
+        player.playbackRate = r;
+        try {
+          localStorage.setItem(RATE_STORAGE_KEY, String(r));
+        } catch (_) {}
+        syncPlaybackRateButtons();
+        updatePositionState();
+      }
+
+      document.querySelectorAll(".cp-rate-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          setPlaybackRate(btn.dataset.rate);
+        });
+      });
 
       let current = 0;
       let positionSyncScheduled = false;
@@ -385,7 +474,10 @@
         updatePositionState();
         updateSeek();
       });
-      player.addEventListener("ratechange", updatePositionState);
+      player.addEventListener("ratechange", () => {
+        syncPlaybackRateButtons();
+        updatePositionState();
+      });
       player.addEventListener("seeked", () => {
         updatePositionState();
         updateSeek();
@@ -501,6 +593,7 @@
       renderPlaylist();
       loadEpisode(0, false);
       updatePlayBtn();
+      setPlaybackRate(readStoredPlaybackRate());
 
       if ("audioSession" in navigator) {
         try { navigator.audioSession.type = "playback"; } catch (_) {}
