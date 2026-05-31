@@ -164,7 +164,7 @@
           src: "https://twosmiles-podcasts.s3.amazonaws.com/ai-massey-lectures/05-the-world-saved-enough.m4a",
           published: "2026-04-19",
         },
-      ];
+      ].filter(ep => !ep.disabled);
 
       const player = document.getElementById("player");
       const playlistEl = document.getElementById("playlist");

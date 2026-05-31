@@ -148,54 +148,63 @@
           note: "Governors' Inspection Day begins with clipboards, football boots, and Dale's first taste of responsibility.",
           src: "https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/dad/chapter-01-josh.mp3",
           published: "2026-05-16",
+          disabled: true,
         },
         {
           title: "The Committee for Safe Football, Chapter 2",
           note: "Dale and Glen find two impossible boys in the field shed as Inspection Day starts to tilt sideways.",
           src: "https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/dad/chapter-02-josh.mp3",
           published: "2026-05-16",
+          disabled: true,
         },
         {
           title: "The Committee for Safe Football, Chapter 3",
           note: "The fake safety bureau becomes official enough to worry Glen and useful enough to tempt Dale.",
           src: "https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/dad/chapter-03-josh.mp3",
           published: "2026-05-16",
+          disabled: true,
         },
         {
           title: "The Committee for Safe Football, Chapter 4",
           note: "Jeff and Biff observe Ridley football, and adult misunderstandings begin turning safety notes into rules.",
           src: "https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/dad/chapter-04-josh.mp3",
           published: "2026-05-16",
+          disabled: true,
         },
         {
           title: "The Committee for Safe Football, Chapter 5",
           note: "Visitor badges, mud cautions, and the red approval stamp make the lie harder to unwind.",
           src: "https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/dad/chapter-05-josh.mp3",
           published: "2026-05-16",
+          disabled: true,
         },
         {
           title: "The Committee for Safe Football, Chapter 6",
           note: "Stamped permission slips turn football rehearsal into a public lesson in approved contact.",
           src: "https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/dad/chapter-06-josh.mp3",
           published: "2026-05-16",
+          disabled: true,
         },
         {
           title: "The Committee for Safe Football, Chapter 7",
           note: "Glen glimpses Biff's manual and finds Ridley's field, the return sequence, and his own mistake.",
           src: "https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/dad/chapter-07-josh.mp3",
           published: "2026-05-16",
+          disabled: true,
         },
         {
           title: "Dale and Glen and the Indoor Skating Rink",
           note: "A cold-snap Ridley College misadventure with plumbing, prefects, and indoor ice.",
           src: "https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/dale-and-glen/indoor-skating-rink-oxley-0.9.mp3",
           published: "2026-05-11",
+          disabled: true,
         },
         {
           title: "Welland Hijink",
           note: "Fiction — Dale and Glen, 1955 Welland; canal, Stokes/General Tire (~26 min, ElevenLabs TTS @ 0.9)",
           src: "https://twosmiles-podcasts.s3.amazonaws.com/dad/welland-hijink.mp3",
           published: "2026-04-26",
+          disabled: true,
         },
         {
           title: "Ironwood, Hurley, and the Lake Superior imagination",
@@ -226,6 +235,7 @@
           note: "Steel, the canal, and life in a 1950s Ontario factory town",
           src: "https://twosmiles-podcasts.s3.amazonaws.com/dad/welland-1.mp3",
           published: "2026-04-12",
+          disabled: true,
         },
         {
           title: "Canada, the Moon & Artemis II",
@@ -239,7 +249,7 @@
           src: "https://twosmiles-podcasts.s3.amazonaws.com/dad/foundation-1965-1970.mp3",
           published: "2026-04-12",
         },
-      ];
+      ].filter(ep => !ep.disabled);
 
       const player = document.getElementById("player");
       const playlistEl = document.getElementById("playlist");

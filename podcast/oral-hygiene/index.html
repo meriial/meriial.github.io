@@ -121,7 +121,7 @@
           note: "Hormones, saliva, and the visit nobody rehearses",
           src: "https://twosmiles-podcasts.s3.amazonaws.com/oral-hygiene/demo.mp3",
         },
-      ];
+      ].filter(ep => !ep.disabled);
 
       const player = document.getElementById("player");
       const playlistEl = document.getElementById("playlist");

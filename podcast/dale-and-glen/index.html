@@ -137,7 +137,7 @@
           src: "https://twosmiles-podcasts.s3.ca-central-1.amazonaws.com/dale-and-glen/indoor-skating-rink-oxley-0.9.mp3",
           published: "2026-05-11",
         },
-      ];
+      ].filter(ep => !ep.disabled);
 
       const player = document.getElementById("player");
       const playlistEl = document.getElementById("playlist");

@@ -140,7 +140,7 @@
           src: "https://twosmiles-podcasts.s3.amazonaws.com/ai/agent-topics-compilation.mp3",
           published: "2026-04-14",
         },
-      ];
+      ].filter(ep => !ep.disabled);
 
       const player = document.getElementById("player");
       const playlistEl = document.getElementById("playlist");

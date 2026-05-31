@@ -158,7 +158,7 @@
           src: "https://twosmiles-podcasts.s3.amazonaws.com/elementary/ontario-trailer-gems-1.mp3",
           published: "2026-04-13",
         },
-      ];
+      ].filter(ep => !ep.disabled);
 
       const player = document.getElementById("player");
       const playlistEl = document.getElementById("playlist");
