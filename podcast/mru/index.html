@@ -10,56 +10,42 @@
     <title>MRU Symposium</title>
     <meta
       name="description"
-      content="A talk from Two Smiles Media for the Mount Royal University symposium — AI without chat: thinking about types, from a single string to generics, the mathematics of human capability, and why to give AI a schema instead of a chat box."
+      content="A talk from Two Smiles Media for the Mount Royal University symposium — AI without chat."
     />
     <link rel="stylesheet" href="styles.css" />
     <style>
-      .video-block {
-        margin: 0 0 1rem;
+      .wrap {
+        max-width: min(96vw, calc(88vh * 16 / 9));
+      }
+      header {
+        margin-bottom: 1rem;
+      }
+      .card {
+        padding: 0.5rem;
       }
       video {
         display: block;
         width: 100%;
         aspect-ratio: 16 / 9;
-        border-radius: 12px;
+        border-radius: 10px;
         background: #000;
-      }
-      .video-note {
-        margin: 0;
-        color: var(--muted);
-        font-size: 0.95rem;
       }
     </style>
   </head>
   <body>
     <div class="wrap">
       <header>
-        <p class="eyebrow">Mount Royal University · video</p>
         <h1>MRU Symposium</h1>
-        <p class="lede">AI without chat: thinking about types.</p>
       </header>
 
       <div class="card">
-        <div class="video-block">
-          <video
-            id="player"
-            controls
-            playsinline
-            preload="metadata"
-            src="https://twosmiles-podcasts.s3.amazonaws.com/mru/mru-symposium.mp4"
-          >
-            Your browser cannot play this video.
-            <a href="https://twosmiles-podcasts.s3.amazonaws.com/mru/mru-symposium.mp4">Download it</a>
-            instead.
-          </video>
-        </div>
-        <p class="video-note">
-          A narrated slideshow. It starts from <code>type Thought = string</code>
-          and builds, one small step at a time, through unions, objects and
-          generics; counts what a mind can do with them; and ends on why to give
-          AI a type to satisfy, not a chat box to fill, so the schema it builds
-          is in your own mind.
-        </p>
+        <video
+          id="player"
+          controls
+          playsinline
+          preload="metadata"
+          src="https://twosmiles-podcasts.s3.amazonaws.com/mru/mru-symposium.mp4"
+        ></video>
       </div>
     </div>
   </body>
