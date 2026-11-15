@@ -137,7 +137,19 @@
           src: "https://twosmiles-podcasts.s3.amazonaws.com/manny/quantum-and-stillness.mp3",
           published: "2026-11-15",
         },
-      ];
+      ].filter(ep => !ep.disabled);
+
+      const player = document.getElementById("player");
+      const playlistEl = document.getElementById("playlist");
+      const cpTitle = document.getElementById("cp-title");
+      const cpTime = document.getElementById("cp-time");
+      const cpDur = document.getElementById("cp-dur");
+      const cpSeek = document.getElementById("cp-seek");
+      const btnPlay = document.getElementById("btn-play");
+      const btnPrev = document.getElementById("btn-prev");
+      const btnNext = document.getElementById("btn-next");
+
+      const RATE_OPTIONS = [1, 1.25, 1.5, 2];
       const RATE_STORAGE_KEY = "pod-playback-rate";
 
       function nearestRate(playbackRate) {
